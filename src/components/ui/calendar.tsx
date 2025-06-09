@@ -1,65 +1,100 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
-
 import { cn } from "../../lib/utils";
-import { buttonVariants } from "./button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = {
+  className?: string
+  selected?: Date
+  onSelect?: (date: Date | undefined) => void
+  disabled?: (date: Date) => boolean
+  showOutsideDays?: boolean
+}
 
 function Calendar({
   className,
-  classNames,
+  selected,
+  onSelect,
+  disabled,
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
-  return (
-    <DayPicker
-      showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
-      classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-medium",
-        nav: "space-x-1 flex items-center",
-        nav_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-        ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
-        table: "w-full border-collapse space-y-1",
-        head_row: "flex",
-        head_cell:
-          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-        row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
-        ),
-        day_range_end: "day-range-end",
-        day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "bg-accent text-accent-foreground",
-        day_outside:
-          "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
-        day_hidden: "invisible",
-        ...classNames,
-      }}
-      components={{
-        IconLeft: (props) => <ChevronLeft className="h-4 w-4" {...props} />,
-        IconRight: (props) => <ChevronRight className="h-4 w-4" {...props} />,
-      }}
+  const [currentMonth, setCurrentMonth] = React.useState(new Date())
+  
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
+  const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay()
+  
+  const previousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
+  }
+  
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))
+  }
+  
+  const handleDayClick = (day: number) => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    if (!disabled?.(date)) {
+      onSelect?.(date)
+    }
+  }
 
-      {...props}
-    />
-  );
+  return (
+    <div className={cn("p-3", className)} {...props}>
+      <div className="flex justify-center items-center mb-4">
+        <button 
+          onClick={previousMonth}
+          className="p-1 hover:bg-gray-100 rounded"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <div className="mx-4 font-medium">
+          {currentMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+        </div>
+        <button 
+          onClick={nextMonth}
+          className="p-1 hover:bg-gray-100 rounded"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 text-center">
+        {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
+          <div key={day} className="p-2 text-sm font-medium text-gray-500">
+            {day}
+          </div>
+        ))}
+        
+        {Array.from({ length: firstDayOfMonth }, (_, i) => (
+          <div key={`empty-${i}`} className="p-2" />
+        ))}
+        
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1
+          const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+          const isSelected = selected && date.toDateString() === selected.toDateString()
+          const isDisabled = disabled?.(date)
+          
+          return (
+            <button
+              key={day}
+              onClick={() => handleDayClick(day)}
+              disabled={isDisabled}
+              className={cn(
+                "p-2 text-sm rounded hover:bg-gray-100",
+                isSelected && "bg-blue-600 text-white hover:bg-blue-700",
+                isDisabled && "text-gray-300 cursor-not-allowed"
+              )}
+            >
+              {day}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
+
 Calendar.displayName = "Calendar";
 
 export { Calendar };
