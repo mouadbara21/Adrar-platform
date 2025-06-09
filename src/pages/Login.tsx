@@ -1,220 +1,275 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { User, Mail, Lock } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
-import { authApi } from '../services/api';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import Logo from '../components/Logo';
+import { User, Key, Mail, Search, ArrowLeft } from 'lucide-react';
+import { toast } from '../components/ui/use-toast';
 
-const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    nom: '',
-    prenom: '',
-    telephone: '',
-    username: '',
-    role: 'randonneur'
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [userType, setUserType] = useState('hiker');
+  const navigate = useNavigate();
+  
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      if (isLogin) {
-        const response = await authApi.login({
-          email: formData.email,
-          password: formData.password
-        });
-        console.log('Login successful:', response.user);
-        // Handle successful login (redirect, store user data, etc.)
+    // Ici vous pouvez implémenter la logique d'authentification réelle
+    console.log('Login attempt with:', { email, password });
+    
+    // Simulation de connexion réussie
+    toast({
+      title: "Connexion réussie",
+      description: "Vous êtes maintenant connecté",
+    });
+    
+    // Redirection selon le type d'utilisateur
+    setTimeout(() => {
+      if (userType === 'guide') {
+        navigate("/guide-profile");
+      } else if (userType === 'refuge') {
+        navigate("/refuge-manager");
       } else {
-        const response = await authApi.register(formData);
-        console.log('Registration successful:', response.user);
-        // Handle successful registration
+        window.location.href = "http://votre-url-personnalisee.com";
+        // Alternative avec React Router (décommentez la ligne ci-dessous et commentez celle au-dessus)
+        // navigate("/your-home-page");
       }
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
+    }, 1500);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Ici vous pouvez implémenter la logique d'inscription réelle
+    console.log('Signup attempt with:', { name, email, password, userType });
+    
+    // Simulation d'inscription réussie
+    toast({
+      title: "Inscription réussie",
+      description: "Votre compte a été créé avec succès",
     });
+    
+    // Redirection selon le type d'utilisateur
+    setTimeout(() => {
+      if (userType === 'guide') {
+        navigate("/guide-profile");
+      } else if (userType === 'refuge') {
+        navigate("/refuge-manager");
+      } else {
+        window.location.href = "http://votre-url-personnalisee.com";
+        // Alternative avec React Router (décommentez la ligne ci-dessous et commentez celle au-dessus)
+        // navigate("/your-home-page");
+      }
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow pt-24 bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center mb-8">
-              <img src="/logo.png" alt="ADRAR" className="h-16 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold">
-                {isLogin ? 'Welcome Back' : 'Join ADRAR'}
-              </h1>
-              <p className="text-gray-600 mt-2">
-                {isLogin 
-                  ? 'Sign in to your account to continue exploring' 
-                  : 'Create an account to start your hiking journey'
-                }
-              </p>
-            </div>
+    <div className="min-h-screen flex flex-col md:flex-row">
 
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
+          {/* Bouton retour à l'accueil */}
+      <div className="absolute top-4 left-4 z-20">
+        <Link to="/">
+          <button className="flex items-center gap-2 text-sm bg-easyhike-green text-white py-1.5 px-3 rounded-md hover:bg-easyhike-light-green transition shadow">
+            <ArrowLeft size={16} />
+            Retour à l'accueil
+          </button>
+        </Link>
+      </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {!isLogin && (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        name="prenom"
-                        value={formData.prenom}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        name="nom"
-                        value={formData.nom}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
-                    </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Username
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                      <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      name="telephone"
-                      value={formData.telephone}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Role
-                    </label>
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    >
-                      <option value="randonneur">Hiker</option>
-                      <option value="guide">Guide</option>
-                      <option value="responsable_refuge">Refuge Manager</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition-colors"
-              >
-                {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
-                <button
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="ml-2 text-green-600 hover:text-green-700 font-medium"
-                >
-                  {isLogin ? 'Sign up' : 'Sign in'}
-                </button>
-              </p>
-            </div>
+      {/* Left side - Image and Branding */}
+    <div
+      className="md:w-2/3 relative flex flex-col justify-center items-center bg-cover bg-center"
+      style={{ backgroundImage: "url('/images/homepage.png')" }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+      <div className="relative z-10 text-white text-left px-8 max-w-2xl">
+        <h1 className="text-6xl font-bold tracking-tight mb-6">
+          HIKE.<br />
+          DISCOVERER.<br />
+          <span className="text-adrar-green">REPEAT.</span>
+        </h1>
+        <p className="text-xl mb-8">Find your next hike</p>
+        <div className="flex justify-start">
+          <div className="relative max-w-md w-full">
+            <Input
+              type="text"
+              placeholder="Search by park, peak, or name"
+              className="pl-10 pr-4 py-2 bg-white/90 text-gray-700 w-full rounded-full"
+            />
+            <Search className="absolute left-3 top-2.5 text-gray-500" size={20} />
           </div>
         </div>
-      </main>
-      <Footer />
+        <Link to="/trails">
+          <button className="mt-6 bg-adrar-green hover:bg-adrar-dark-green text-white py-2 px-4 rounded-md">
+            Discover trails →
+          </button>
+        </Link>
+      </div>
+    </div>
+
+
+      {/* Right side - Login Form */}
+      <div className="md:w-1/3 flex items-center justify-center p-6 bg-white">
+        <div className="w-full max-w-md">
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Welcome back</CardTitle>
+                  <CardDescription>
+                    Sign in to your account to continue your adventures
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 text-easyhike-gray" size={16} />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <div className="relative">
+                        <Key className="absolute left-3 top-3 text-easyhike-gray" size={16} />
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-easyhike-green hover:bg-easyhike-light-green"
+                    >
+                      Login
+                    </Button>
+                  </form>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <Button variant="link" asChild>
+                    <Link to="/forgot-password">Forgot password?</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="signup">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create an account</CardTitle>
+                  <CardDescription>
+                    Join our community to discover amazing trails
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSignup} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 text-easyhike-gray" size={16} />
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="John Doe"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 text-easyhike-gray" size={16} />
+                        <Input
+                          id="signup-email"
+                          type="email"
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">Password</Label>
+                      <div className="relative">
+                        <Key className="absolute left-3 top-3 text-easyhike-gray" size={16} />
+                        <Input
+                          id="signup-password"
+                          type="password"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="user-type">I am a</Label>
+                      <select
+                        id="user-type"
+                        value={userType}
+                        onChange={(e) => setUserType(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <option value="hiker">Hiker</option>
+                        <option value="guide">Guide</option>
+                        <option value="refuge">Refuge Manager</option>
+                      </select>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-easyhike-green hover:bg-easyhike-light-green"
+                    >
+                      Sign Up
+                    </Button>
+                  </form>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <p className="text-sm text-easyhike-gray">
+                    By signing up, you agree to our{' '}
+                    <Link to="/terms" className="text-easyhike-green hover:underline">
+                      Terms of Service
+                    </Link>
+                    {' '}and{' '}
+                    <Link to="/privacy" className="text-easyhike-green hover:underline">
+                      Privacy Policy
+                    </Link>
+                  </p>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
