@@ -131,7 +131,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gray-50 px-6 md:px-16 lg:px-24">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="bg-white p-6 rounded-lg shadow-md">
@@ -159,7 +159,7 @@ const Home = () => {
       </section>
 
       {/* Popular Trails Section */}
-      <section className="py-16">
+      <section className="py-16 px-6 md:px-16 lg:px-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -196,7 +196,7 @@ const Home = () => {
       </section>
 
       {/* Interactive Map Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gray-50 px-6 md:px-16 lg:px-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">

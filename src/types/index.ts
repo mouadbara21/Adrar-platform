@@ -9,6 +9,7 @@ export interface Trail {
   localisation_de_depart: string;
   localisation_darrive: string;
   id_parc: number;
+  image_url: string;
   parc_nom?: string;
   parc_localisation?: string;
   rating: number;

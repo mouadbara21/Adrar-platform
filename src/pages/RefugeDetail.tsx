@@ -13,6 +13,8 @@ import {
   Zap,
   Droplets,
   Thermometer,
+  Hammer,
+  FileText,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
@@ -56,19 +58,47 @@ const RefugeDetail = () => {
     fetchRefuge();
   }, [id]);
 
+  // Fonction pour obtenir l'image du service
   const getServiceIcon = (serviceName: string) => {
-    const icons: { [key: string]: JSX.Element } = {
-      "Eau potable": <Droplets size={24} className="text-blue-500" />,
-      Electricité: <Zap size={24} className="text-yellow-500" />,
-      Chauffage: <Thermometer size={24} className="text-red-500" />,
-      Restauration: <Utensils size={24} className="text-green-500" />,
-      Internet: <Wifi size={24} className="text-purple-500" />,
+    const icons: { [key: string]: string } = {
+      "Eau potable":
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F50%2F48%2Fefa81co9ae15o&mime=image%252Fpng&originalname=Icon_57-Eau-courante.png&geometry=56x56",
+      Electricité:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2Fb0%2F56%2Fefa81cp1yhd97&mime=image%252Fpng&originalname=Icon_64-Prises-electriques.png&geometry=56x56",
+      Chauffage:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F34%2F66%2Fefa81col3idzj&mime=image%252Fpng&originalname=Icon_60-Chauffage.png&geometry=56x56",
+      Restauration:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2Fec%2F43%2Fefa81coy53bep&mime=image%252Fpng&originalname=Icon_63-Restauration.png&geometry=56x56",
+      Couette:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F7d%2F03%2Fefa81cnoifo9r&mime=image%252Fpng&originalname=Icon_51-Couette.png&geometry=56x56",
+      Couverture:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F5a%2Fca%2Fefa81cnstfepu&mime=image%252Fpng&originalname=Icon_52-Couverture.png&geometry=56x56",
+      Douche:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2Fb0%2F75%2Fefa81co5eoilr&mime=image%252Fpng&originalname=Icon_55-Douche.png&geometry=56x56",
+      Vaisselle:
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F17%2F50%2Fefa81codb8brv&mime=image%252Fpng&originalname=Icon_58-Vaisselle.png&geometry=56x56",
+      "Équipement de cuisson":
+        "https://refugedaverole.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F9f%2Fbf%2Fefa81coh8ef2l&mime=image%252Fpng&originalname=Icon_59-Equipement-de-cuisson.png&geometry=56x56",
+      Internet:
+        "https://chaletlaberarde.ffcam.fr/csx/scripts/resizer.php?filename=REFUGE_PRESTATIONS%2FpictoON%2F44%2F99%2Fefa81copkm6fj&mime=image%252Fpng&originalname=Icon_61-Wifi.png&geometry=56x56",
     };
-    return icons[serviceName] || <Star size={24} className="text-gray-500" />;
+
+    const src = icons[serviceName] || "/images/services/default.png";
+    return <img src={src} alt={serviceName} className="w-6 h-6" />;
   };
 
+  // Fonction pour obtenir l'image de l'équipement
   const getEquipmentIcon = (equipmentName: string) => {
-    return <Mountain size={24} className="text-gray-600" />;
+    const icons: { [key: string]: string } = {
+      Cordes: "/images/equipement/Cordes.png",
+      Crampons: "/images/equipement/Crampons.png",
+      Piolets: "/images/equipement/Piolets.png",
+      Tentes: "/images/equipement/Tentes.png",
+      Battons_de_randonnées: "/images/equipement/Battons_de_randonées.png",
+    };
+
+    const src = icons[equipmentName] || "/images/equipement/default.png";
+    return <img src={src} alt={equipmentName} className="w-6 h-6" />;
   };
 
   const handleReservationSubmit = async () => {
@@ -145,7 +175,7 @@ const RefugeDetail = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col px-6 md:px-16 lg:px-24">
       <Navbar />
       <main className="flex-grow pt-16">
         {/* Hero Section */}
@@ -196,7 +226,7 @@ const RefugeDetail = () => {
           {/* Description */}
           <section className="mb-12">
             <div className="flex items-center mb-6">
-              <Mountain className="mr-3 text-green-600" size={32} />
+              <FileText className="mr-3 text-600" size={32} />
               <h2 className="text-2xl font-bold">Description</h2>
             </div>
             <p className="text-lg text-gray-700">{refuge.description}</p>
@@ -207,7 +237,7 @@ const RefugeDetail = () => {
             {refuge.services && refuge.services.length > 0 && (
               <section>
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
-                  <Utensils className="mr-3 text-green-600\" size={24} />
+                  <Utensils className="mr-3 text-600\" size={24} />
                   Available Services
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -230,7 +260,7 @@ const RefugeDetail = () => {
             {refuge.equipments && refuge.equipments.length > 0 && (
               <section>
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
-                  <Mountain className="mr-3 text-green-600" size={24} />
+                  <Hammer className="mr-3 text-600" size={24} />
                   Available Equipment
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -251,7 +281,7 @@ const RefugeDetail = () => {
           {/* Capacity and Pricing */}
           <section className="mb-12 bg-gray-50 p-6 rounded-lg">
             <h2 className="text-2xl font-bold mb-6 flex items-center">
-              <Bed className="mr-3 text-green-600" size={24} />
+              <Bed className="mr-3 text-600" size={24} />
               Capacity and Pricing
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -280,7 +310,7 @@ const RefugeDetail = () => {
           {refuge.guides && refuge.guides.length > 0 && (
             <section className="mb-12">
               <h2 className="text-2xl font-bold mb-6 flex items-center">
-                <User className="mr-3 text-green-600" size={24} />
+                <User className="mr-3 text-600" size={24} />
                 Available Guides
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -315,16 +345,21 @@ const RefugeDetail = () => {
           {refuge.summits && refuge.summits.length > 0 && (
             <section className="mb-12">
               <h2 className="text-2xl font-bold mb-6 flex items-center">
-                <Mountain className="mr-3 text-green-600" size={24} />
+                <img
+                  src="/images/icons/mountain.png"
+                  alt="altitude icon"
+                  className="w-12 h-12 mr-3"
+                />
                 Accessible Summits
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {refuge.summits.map((summit) => (
                   <Card key={summit.id_sommet} className="p-6 text-center">
                     <CardContent className="p-0">
-                      <Mountain
-                        className="mx-auto mb-4 text-green-600"
-                        size={48}
+                      <img
+                        src="/images/icons/mountain.png"
+                        alt="altitude icon"
+                        className="mx-auto mb-4 w-14 h-14"
                       />
                       <h3 className="font-bold text-lg mb-2">{summit.nom}</h3>
                       <p className="text-gray-600 mb-2">

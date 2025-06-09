@@ -23,7 +23,7 @@ const TrailCard = ({ trail }: TrailCardProps) => {
       <div className="bg-white rounded-lg overflow-hidden shadow-md h-full hover:shadow-lg transition-shadow">
         <div className="relative h-48">
           <img
-            src="https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg"
+            src={trail.image_url}
             alt={trail.nom}
             className="w-full h-full object-cover"
           />

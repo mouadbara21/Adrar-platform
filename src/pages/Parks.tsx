@@ -39,7 +39,7 @@ const Parks = () => {
   }, [searchTerm, parks]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col px-6 md:px-16 lg:px-24">
       <Navbar />
       <main className="flex-grow pt-24">
         <div className="container mx-auto px-4">
